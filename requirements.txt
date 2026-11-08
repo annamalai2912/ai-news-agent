@@ -1,0 +1,6 @@
+feedparser
+requests
+trafilatura
+markdown
+googlenewsdecoder
+crewai[google-genai]==1.15.37
