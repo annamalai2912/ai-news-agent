@@ -17,6 +17,7 @@ jobs:
       - run: python crew_news.py
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: gemini/gemini-3.8-flash
+          GEMINI_MODEL: gemini/gemini-3.5-flash-lite
           DRIVE_WEBHOOK_URL: ${{ secrets.DRIVE_WEBHOOK_URL }}
           DRIVE_SECRET: ${{ secrets.DRIVE_SECRET }}
+

@@ -1,6 +1,8 @@
 # crew_news.py
 import os, json, requests, markdown
 from datetime import datetime, timezone, timedelta
+from dotenv import load_dotenv
+load_dotenv()
 IST = timezone(timedelta(hours=5, minutes=30))
 import trafilatura
 from crewai import Agent, Task, Crew, Process, LLM
@@ -8,7 +10,7 @@ from crewai.tools import tool
 from news_sources import collect
 
 llm = LLM(
-    model=os.getenv("GEMINI_MODEL", "gemini/gemini-3.8-flash"),
+    model=os.getenv("GEMINI_MODEL", "gemini/gemini-3.5-flash-lite"),
     api_key=os.environ["GEMINI_API_KEY"],
     temperature=0.2,
 )
@@ -16,9 +18,15 @@ llm = LLM(
 @tool("read_article")
 def read_article(url: str) -> str:
     """Fetches the main text of an article URL (first ~4000 chars)."""
-    html = trafilatura.fetch_url(url)
-    text = trafilatura.extract(html) if html else None
-    return (text or "Could not fetch article.")[:4000]
+    try:
+        r = requests.get(url, timeout=5, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+        if r.status_code == 200:
+            text = trafilatura.extract(r.text)
+            if text:
+                return text[:4000]
+    except Exception:
+        pass
+    return "Could not fetch article."
 
 def save_to_drive(md_text):
     url, secret = os.getenv("DRIVE_WEBHOOK_URL"), os.getenv("DRIVE_SECRET")
@@ -77,7 +85,7 @@ def main():
         agent=editor, context=[t1, t2])
 
     crew = Crew(agents=[researcher, analyst, editor], tasks=[t1, t2, t3],
-                process=Process.sequential, max_rpm=8)
+                process=Process.sequential, max_rpm=30)
     import time
     for attempt in range(3):
         try:

@@ -2,6 +2,7 @@
 import requests, feedparser
 from googlenewsdecoder import gnewsdecoder
 from datetime import datetime, timezone, timedelta
+from concurrent.futures import ThreadPoolExecutor
 
 FEEDS = {
     "OpenAI": "https://openai.com/news/rss.xml",
@@ -70,18 +71,19 @@ def resolve(url):
     if "news.google.com" not in url:
         return url
     try:
-        r = gnewsdecoder(url, interval=1)
+        r = gnewsdecoder(url, interval=0.2)
         if r.get("success") or r.get("status"):
             return r["decoded_url"]
-        print("decode failed:", r.get("message"))
-    except Exception as e:
-        print("decode failed:", repr(e))
+    except Exception:
+        pass
     return None
 
 def collect():
+    raw_items = from_rss() + from_hn()
+    with ThreadPoolExecutor(max_workers=10) as ex:
+        urls = list(ex.map(lambda it: resolve(it["url"]), raw_items))
     out, seen = [], set()
-    for it in from_rss() + from_hn():
-        real = resolve(it["url"])
+    for it, real in zip(raw_items, urls):
         if not real or real in seen or any(d in real for d in SKIP_DOMAINS):
             continue
         seen.add(real)
