@@ -119,3 +119,4 @@ Configure the following secrets under **Settings → Secrets and variables → A
 ## 📄 License
 
 MIT License. Feel free to fork and adapt for your own daily intelligence workflows!
+
