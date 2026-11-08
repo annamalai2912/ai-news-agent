@@ -1,5 +1,10 @@
 # 🤖 Autonomous Daily AI News Agent
 
+[![daily-ai-news](https://github.com/annamalai2912/ai-news-agent/actions/workflows/news.yml/badge.svg)](https://github.com/annamalai2912/ai-news-agent/actions/workflows/news.yml)
+![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)
+![CrewAI](https://img.shields.io/badge/CrewAI-1.15-orange.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+
 An autonomous multi-agent pipeline built with **CrewAI** and **Google Gemini** that curates, analyzes, and synthesizes the top AI breakthroughs every 24 hours—delivering a Markdown executive briefing directly to Google Drive daily at 5:00 AM IST.
 
 ---
